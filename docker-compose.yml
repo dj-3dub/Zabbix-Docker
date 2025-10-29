@@ -1,0 +1,103 @@
+name: zabbix-test
+
+networks:
+  zbx-net:
+    driver: bridge
+
+volumes:
+  zbx-db-data:
+  zbx-server-data:
+  zbx-logs:
+
+services:
+  db:
+    image: timescale/timescaledb:latest-pg16
+    container_name: zbx-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - zbx-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [zbx-net]
+
+  server:
+    image: zabbix/zabbix-server-pgsql:alpine-latest
+    container_name: zbx-server
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_SERVER_HOST: db
+      DB_SERVER_PORT: 5432
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      ZBX_STARTPOLLERS: "8"
+      ZBX_CACHESIZE: "128M"
+      TZ: ${TZ}
+    ports:
+      - "${ZBX_PORT}:10051/tcp"
+    volumes:
+      - zbx-server-data:/var/lib/zabbix
+      - zbx-logs:/var/log/zabbix
+    ulimits:
+      nofile: 65536
+    networks: [zbx-net]
+
+  web:
+    image: zabbix/zabbix-web-nginx-pgsql:alpine-latest
+    container_name: zbx-web
+    depends_on:
+      - server
+      - db
+    environment:
+      DB_SERVER_HOST: db
+      DB_SERVER_PORT: 5432
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      ZBX_SERVER_HOST: server
+      PHP_TZ: ${TZ}
+    ports:
+      - "${WEB_PORT}:8080"
+    networks: [zbx-net]
+
+  # Agent in "safe mode": no host PID, no /proc or /sys binds -> avoids AppArmor issues
+  agent:
+    image: zabbix/zabbix-agent2:alpine-latest
+    container_name: zbx-agent
+    environment:
+      ZBX_SERVER_HOST: server
+      ZBX_HOSTNAME: ${ZBX_AGENT_HOSTNAME}
+      TZ: ${TZ}
+    restart: unless-stopped
+    networks: [zbx-net]
+
+  # --- Optional: host-level agent (commented out) ---
+  # If you want full host metrics later, try this block instead.
+  # If AppArmor errors return, flip to privileged true OR install a native agent.
+  #
+  # agent:
+  #   image: zabbix/zabbix-agent2:alpine-latest
+  #   container_name: zbx-agent
+  #   environment:
+  #     ZBX_SERVER_HOST: server
+  #     ZBX_HOSTNAME: ${ZBX_AGENT_HOSTNAME}
+  #     TZ: ${TZ}
+  #   pid: "host"
+  #   privileged: true               # strongest bypass for AppArmor
+  #   security_opt:
+  #     - "apparmor=unconfined"
+  #   volumes:
+  #     - /:/hostfs:ro
+  #     - /var/run:/var/run:ro
+  #     - /proc:/proc:ro
+  #     - /sys:/sys:ro
+  #   networks: [zbx-net]

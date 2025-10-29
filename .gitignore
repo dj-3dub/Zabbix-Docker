@@ -1,0 +1,15 @@
+# Local env overrides
+.env.local
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Docker
+**/.env.backup
+**/.envrc
+.env
