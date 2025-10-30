@@ -1,64 +1,149 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/PowerShell/PowerShell/master/assets/ps_black_64.svg" width="90" alt="PowerShell Logo"/>
+<p align=\"center\">
+  <img src=\"https://raw.githubusercontent.com/zabbix/zabbix-assets/master/assets/img/logo/zabbix_logo.svg\" alt=\"Zabbix Logo\" width=\"220\"/>
 </p>
 
-# Zabbix Test Stack (Docker)
+# Zabbix‑Docker — Production‑Ready Monitoring Stack (Portfolio Build)
 
-Spin up a disposable Zabbix environment (TimescaleDB + Zabbix Server + Web + Agent2) to kick the tires on your existing Docker host. Defaults avoid collisions on busy homelab boxes.
+A from‑scratch, containerized **Zabbix** stack with **PostgreSQL** and optional **reverse proxy** and **SSO**. Built to demonstrate platform engineering, secure design, and observability fundamentals in a real homelab using a `.lab` domain (e.g., `monitor.lab`).
 
-## Quick start
+> This README mirrors the tone/structure of your **Homelab‑SSO** project: clean sections, professional narrative, and recruiter‑friendly framing. A separate architecture doc and Graphviz diagram are included under `/docs`.
+
+---
+
+## ✨ Highlights
+
+- **Clean architecture**: Zabbix Server, Web, DB, Proxy (optional), Agent
+- **Reproducible**: Docker Compose with env‑driven config and persistent volumes
+- **Security‑minded**: TLS via Caddy/Traefik overlay, secrets outside Git, least privilege
+- **Identity‑aware**: Optional **Authentik** SSO via **SAML** or **forward‑auth**
+- **Portfolio‑grade**: Clear docs, scripts, and an operations checklist
+
+---
+
+## 🧭 Project Goals
+
+Showcase the end‑to‑end journey of standing up an internal monitoring platform:
+- Network/host/service visibility with Zabbix templates and agents
+- Healthy container orchestration and stateful services on Docker
+- Secure exposure with TLS and SSO (when enabled)
+- Practical operations (backup/restore, diagnostics, troubleshooting)
+
+---
+
+## 🏗️ Architecture
+
+See the dedicated doc and diagram:
+- **docs/ARCHITECTURE.md** — narrative overview
+- **docs/zabbix_architecture_public.dot** — Graphviz source (render to SVG/PNG)
+
+> Prefer the CafeOps pattern: keep the diagram and details separate from the main README.
+
+---
+
+## 🧰 Tech Stack
+
+- **Zabbix** (Server, Web, Proxy, Agent)
+- **PostgreSQL** (primary datastore)
+- **Docker Compose v2**
+- **Caddy** or **Traefik** *(optional)* for TLS + pretty URL (`https://monitor.lab`)
+- **Authentik** *(optional)* for SSO (SAML or forward‑auth patterns)
+
+---
+
+## ⚙️ Prerequisites
+
+- Linux host with Docker Engine 24+ and Docker Compose v2
+- Local DNS/hosts entry for `monitor.lab` → Docker host IP
+- (Optional) TLS certificates or ACME DNS for your `.lab` domain
+- `git` and Graphviz (`dot`) if you want to render the diagram
+
+---
+
+## 🚀 Quick Start
 
 ```bash
-# 1) Copy this folder to your Docker host
-cd zabbix-test-scaffold
+git clone https://github.com/dj-3dub/Zabbix-Docker.git
+cd Zabbix-Docker
 
-# 2) (Optional) adjust .env (ports, passwords)
-nano .env
+# Copy and tailor environment files
+cp .env.example .env
+# edit DOMAIN=monitor.lab and strong passwords
 
-# 3) Launch
+# Bring up the base stack (no proxy, direct ports)
 docker compose up -d
 
-# 4) Open the UI
-# http://<host-ip>:8180  (user: Admin  pass: zabbix)
+# Visit the UI on the published port or behind your proxy of choice
+# Optional: enable Caddy/Traefik overlay compose for TLS + pretty URL
 ```
 
-## Make targets (optional)
+> This repo is designed to run **with or without** a reverse proxy. Keep the base compose minimal; add an overlay file for Caddy/Traefik when you want HTTPS and SSO.
 
-```bash
-make up       # docker compose up -d
-make down     # docker compose down -v
-make logs     # tail logs
-make ps       # list containers
-make status   # check key ports in use
-make clean    # prune dangling images/volumes (careful)
-```
+---
 
-## Ports
+## 🔐 Optional: TLS + Reverse Proxy
 
-- **Web UI:** `${WEB_PORT:-8180}` → container 8080  
-- **Server:** `${ZBX_PORT:-10051}` → container 10051
+- **Caddy overlay**: automatic HTTPS, minimal config
+- **Traefik overlay**: Docker label routing, middlewares, mTLS, dashboards
 
-Adjust these in `.env` if your host already uses them.
+Both overlays route `https://monitor.lab` → Zabbix Web. Choose based on your broader homelab standards.
 
-## Caddy snippet (optional)
+---
 
-```
-zabbix.lab.pizza {
-  encode zstd gzip
-  reverse_proxy 127.0.0.1:${WEB_PORT}
-}
-```
+## 🔑 Optional: Authentik SSO
 
-## Tear down
+Two supported patterns:
 
-```bash
-docker compose down -v
-```
+**SAML (recommended, no proxy required)**  
+Authentik as **IdP**, Zabbix as **SP**. In Zabbix → Administration → Authentication → SAML:
+- ACS URL: `https://monitor.lab/index_sso.php`
+- SP Entity ID: `urn:monitor.lab:zabbix`
+- Map attributes: `mail` (username), `givenName`, `sn`, and optional `groups`
+- Keep local **Admin** password for break‑glass access
 
-## Notes
+**Forward‑Auth at Proxy (requires Caddy/Traefik)**  
+Protect the route with an Authentik outpost, pass identity headers, set Zabbix Authentication to **HTTP** (web‑server) and map header (e.g., `X-Forwarded-User`).
 
-- This is **not** tuned for production. It’s intentionally lightweight.
-- If you plan to keep data between runs, remove the `-v` flag in `down` to preserve volumes.
-- TimescaleDB is used for better trends/compression if you later keep this around.
-```
+See **docs/ARCHITECTURE.md** for diagrams and steps.
 
+---
+
+## 🧪 Diagnostics
+
+- `scripts/zbxdiag.sh` — quick API sanity: login/auth, version, host lookup
+- Container healthchecks for Server/Web/DB
+- Suggested item/triggers for self‑monitoring Zabbix itself
+
+---
+
+## 🗃️ Backup & Restore
+
+- Nightly `pg_dump` to `/backups` via helper script
+- Store off‑box (NAS/S3/Restic). To restore, stop Zabbix Server, restore DB, start stack
+
+---
+
+## 🔐 Security Notes
+
+- Enforce HTTPS when exposed; restrict HTTP
+- Store secrets in `.env` / Docker secrets; **never** commit real credentials
+- Limit container privileges and networks
+- Set strong DB/Zabbix passwords and rotate routinely
+
+---
+
+## 🛣️ Roadmap
+
+- Grafana dashboards via Zabbix data source (read‑only)
+- CI/CD: compose lint + shellcheck + smoke API test
+- Terraform module to provision host + DNS
+- HA notes for Zabbix Server and DB
+
+---
+
+## 👤 About
+
+Built by **Tim Heverin** (dj‑3dub).  
+- GitHub: https://github.com/dj-3dub  
+- LinkedIn: https://www.linkedin.com/in/tim-heverin/
+
+MIT License.

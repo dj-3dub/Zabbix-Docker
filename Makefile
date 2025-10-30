@@ -1,24 +1,26 @@
+# Simple helpers. Use tabs for commands.
 SHELL := /bin/bash
 
-.PHONY: up down logs ps status clean portcheck
+.PHONY: up down logs restart diag backup arch
 
 up:
 	docker compose up -d
 
 down:
-	docker compose down -v
+	docker compose down
 
 logs:
-	docker compose logs -f --tail=100
+	docker compose logs -f zabbix-server zabbix-web-service postgres
 
-ps:
-	docker compose ps
+restart:
+	docker compose restart
 
-status: portcheck ps
+diag:
+	bash scripts/zbxdiag.sh || true
 
-portcheck:
-	@./scripts/check-ports.sh || true
+backup:
+	bash scripts/backup.sh || true
 
-clean:
-	docker system prune -f
-	docker volume prune -f
+# Render architecture SVG from Graphviz DOT
+arch:
+	dot -Tsvg docs/zabbix_architecture_public.dot -o docs/zabbix_architecture_public.svg
