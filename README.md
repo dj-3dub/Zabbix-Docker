@@ -1,5 +1,5 @@
 <p align=\"center\">
-  <img src=\"https://raw.githubusercontent.com/zabbix/zabbix-assets/master/assets/img/logo/zabbix_logo.svg\" alt=\"Zabbix Logo\" width=\"220\"/>
+<img src="docs/images/zabbix_logo_500x131.png" alt="Zabbix Logo" width="220"/>
 </p>
 
 # Zabbix‑Docker — Production‑Ready Monitoring Stack 
