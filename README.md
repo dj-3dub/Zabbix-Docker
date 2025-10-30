@@ -4,7 +4,7 @@
 
 # Zabbix‑Docker — Production‑Ready Monitoring Stack 
 
-A production-ready, containerized Zabbix monitoring stack built to showcase platform engineering and observability best practices.
+A production-grade, containerized Zabbix monitoring platform engineered to demonstrate observability, secure infrastructure design, and identity integration within a modern homelab environment.
 
 ---
 
@@ -19,6 +19,8 @@ A production-ready, containerized Zabbix monitoring stack built to showcase plat
 ---
 
 ## 🧭 Project Goals
+
+This project demonstrates how to design, deploy, and secure a self-contained observability platform using modern infrastructure tooling.
 
 Showcase the end‑to‑end journey of standing up an internal monitoring platform:
 - Network/host/service visibility with Zabbix templates and agents
@@ -101,6 +103,17 @@ Two integration patterns are supported:
 Both methods maintain compatibility with a local administrative account for break-glass access and support standard SSO attributes such as email, given name, and group membership.
 
 See **docs/ARCHITECTURE.md** for diagrams and steps.
+
+---
+
+## 🖥️ Live Agent Monitoring Example
+
+The following capture demonstrates the Zabbix Agent operating on ubuntu-workstation.lab, validating active connectivity and telemetry exchange with the Zabbix Server.
+
+<p align="center">
+  <img src="docs/images/zabbix_agent_running.png" alt="Zabbix Agent Running on Ubuntu Workstation" width="85%">
+  <sub>Zabbix Agent service running on ubuntu-workstation.lab</sub>
+</p>
 
 ---
 
