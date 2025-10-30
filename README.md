@@ -137,6 +137,20 @@ See **docs/ARCHITECTURE.md** for diagrams and steps.
 
 ---
 
+## 🧠 What I Learned
+
+Building this project reinforced several key areas of my platform engineering and DevOps skill set:
+
+- **End-to-end observability design:** Implemented a complete monitoring stack — from agent data collection to dashboards and alerting — mirroring real-world enterprise environments.  
+- **Secure infrastructure practices:** Strengthened my understanding of TLS termination, container isolation, and least-privilege configurations in multi-service Docker environments.  
+- **Identity and access integration:** Explored how SAML and forward-auth patterns connect application authentication to centralized identity providers like Authentik.  
+- **Infrastructure-as-Code discipline:** Structured the project with reproducible Compose files, environment templates, and Makefile targets for consistent deployments.  
+- **Documentation and presentation:** Learned to communicate complex architectures clearly through diagrams, structured READMEs, and professional repo organization.  
+
+Each of these lessons translates directly into the way I approach designing, securing, and automating production-ready environments.
+
+---
+
 ## 👤 About
 
 Built by **Tim Heverin** (dj‑3dub).  
