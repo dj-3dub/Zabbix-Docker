@@ -31,8 +31,16 @@ Showcase the end‑to‑end journey of standing up an internal monitoring platfo
 ## 🏗️ Architecture
 
 See the dedicated doc and diagram:
-- **docs/ARCHITECTURE.md** — narrative overview
-- **docs/zabbix_architecture_public.dot** — Graphviz source (render to SVG/PNG)
+<p align="center">
+  <img src="docs/zabbix_architecture_public.svg" alt="Zabbix Docker Architecture" width="850"/>
+</p>
+
+> Click below to view or download the PNG version:
+>
+> [📎 View PNG](docs/zabbix_architecture_public.png)
+
+The diagram illustrates how each service interacts within the Docker network,
+including optional integrations with Authentik for SSO and Caddy/Traefik for TLS termination.
 
 ---
 
