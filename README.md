@@ -85,19 +85,20 @@ docker compose up -d
 
 ---
 
-## 🔑 Optional: Authentik SSO
+## 🔑 Optional: Authentik SSO Integration
 
-Two supported patterns:
+This deployment supports integration with **Authentik** as a centralized identity provider, enabling secure single sign-on (SSO) for the Zabbix web interface.
 
-**SAML (recommended, no proxy required)**  
-Authentik as **IdP**, Zabbix as **SP**. In Zabbix → Administration → Authentication → SAML:
-- ACS URL: `https://monitor.lab/index_sso.php`
-- SP Entity ID: `urn:monitor.lab:zabbix`
-- Map attributes: `mail` (username), `givenName`, `sn`, and optional `groups`
-- Keep local **Admin** password for break‑glass access
+Two integration patterns are supported:
 
-**Forward‑Auth at Proxy (requires Caddy/Traefik)**  
-Protect the route with an Authentik outpost, pass identity headers, set Zabbix Authentication to **HTTP** (web‑server) and map header (e.g., `X-Forwarded-User`).
+- **SAML-based authentication (recommended):**  
+  Zabbix acts as a SAML Service Provider (SP) and Authentik as the Identity Provider (IdP).  
+  This approach allows seamless user federation, centralized policy enforcement, and single sign-on without requiring a reverse proxy.  
+
+- **Forward-auth via reverse proxy (Caddy or Traefik):**  
+  Authentik can also protect the Zabbix frontend through a forward-auth middleware, authenticating requests at the proxy layer and passing verified identity headers to Zabbix’s HTTP authentication module.  
+
+Both methods maintain compatibility with a local administrative account for break-glass access and support standard SSO attributes such as email, given name, and group membership.
 
 See **docs/ARCHITECTURE.md** for diagrams and steps.
 
