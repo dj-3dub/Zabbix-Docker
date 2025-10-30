@@ -6,8 +6,6 @@
 
 A from‑scratch, containerized **Zabbix** stack with **PostgreSQL** and optional **reverse proxy** and **SSO**. Built to demonstrate platform engineering, secure design, and observability fundamentals in a real homelab using a `.lab` domain (e.g., `monitor.lab`).
 
-> This README mirrors the tone/structure of your **Homelab‑SSO** project: clean sections, professional narrative, and recruiter‑friendly framing. A separate architecture doc and Graphviz diagram are included under `/docs`.
-
 ---
 
 ## ✨ Highlights
@@ -35,8 +33,6 @@ Showcase the end‑to‑end journey of standing up an internal monitoring platfo
 See the dedicated doc and diagram:
 - **docs/ARCHITECTURE.md** — narrative overview
 - **docs/zabbix_architecture_public.dot** — Graphviz source (render to SVG/PNG)
-
-> Prefer the CafeOps pattern: keep the diagram and details separate from the main README.
 
 ---
 
@@ -76,16 +72,10 @@ docker compose up -d
 # Optional: enable Caddy/Traefik overlay compose for TLS + pretty URL
 ```
 
-> This repo is designed to run **with or without** a reverse proxy. Keep the base compose minimal; add an overlay file for Caddy/Traefik when you want HTTPS and SSO.
-
----
-
 ## 🔐 Optional: TLS + Reverse Proxy
 
 - **Caddy overlay**: automatic HTTPS, minimal config
 - **Traefik overlay**: Docker label routing, middlewares, mTLS, dashboards
-
-Both overlays route `https://monitor.lab` → Zabbix Web. Choose based on your broader homelab standards.
 
 ---
 
