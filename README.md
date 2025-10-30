@@ -32,15 +32,13 @@ Showcase the end‑to‑end journey of standing up an internal monitoring platfo
 
 See the dedicated doc and diagram:
 <p align="center">
-  <img src="docs/zabbix_architecture_public.svg" alt="Zabbix Docker Architecture" width="850"/>
+  <img src="./docs/zabbix_architecture_public.svg" alt="Zabbix Docker Architecture" width="100%">
+  <sub>Having trouble viewing the SVG? View the PNG version <a href="./docs/zabbix_architecture_public.png">here</a>.</sub>
 </p>
 
-> Click below to view or download the PNG version:
->
-> [📎 View PNG](docs/zabbix_architecture_public.png)
-
-The diagram illustrates how each service interacts within the Docker network,
-including optional integrations with Authentik for SSO and Caddy/Traefik for TLS termination.
+The architecture illustrates the full Zabbix monitoring stack running in Docker — including
+Zabbix Server, Web Frontend, PostgreSQL, and optional integrations for Authentik SSO and
+Caddy/Traefik for HTTPS termination.
 
 ---
 
