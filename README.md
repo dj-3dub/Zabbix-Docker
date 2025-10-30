@@ -2,7 +2,7 @@
   <img src=\"https://raw.githubusercontent.com/zabbix/zabbix-assets/master/assets/img/logo/zabbix_logo.svg\" alt=\"Zabbix Logo\" width=\"220\"/>
 </p>
 
-# Zabbix‑Docker — Production‑Ready Monitoring Stack (Portfolio Build)
+# Zabbix‑Docker — Production‑Ready Monitoring Stack 
 
 A from‑scratch, containerized **Zabbix** stack with **PostgreSQL** and optional **reverse proxy** and **SSO**. Built to demonstrate platform engineering, secure design, and observability fundamentals in a real homelab using a `.lab` domain (e.g., `monitor.lab`).
 
