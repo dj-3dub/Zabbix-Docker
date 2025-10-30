@@ -4,7 +4,7 @@
 
 # Zabbix‑Docker — Production‑Ready Monitoring Stack 
 
-A from‑scratch, containerized **Zabbix** stack with **PostgreSQL** and optional **reverse proxy** and **SSO**. Built to demonstrate platform engineering, secure design, and observability fundamentals in a real homelab using a `.lab` domain (e.g., `monitor.lab`).
+A production-ready, containerized Zabbix monitoring stack built to showcase platform engineering and observability best practices.
 
 ---
 
