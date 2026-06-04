@@ -28,7 +28,9 @@ HOSTNAME="${1:-}"
 HOSTIP="${2:-}"
 
 shift $(( $# > 0 ? 1 : 0 ))
-[[ -n "${HOSTIP:-}" ]] && shift || true
+if [[ -n "${HOSTIP:-}" ]]; then
+  shift
+fi
 
 # Parse optional flags
 while [[ $# -gt 0 ]]; do
