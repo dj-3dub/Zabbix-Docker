@@ -1,66 +1,102 @@
-<p align=\"center\">
-<img src="docs/images/zabbix_logo_500x131.png" alt="Zabbix Logo" width="220"/>
+<p align="center">
+  <img src="docs/images/zabbix_logo_500x131.png" alt="Zabbix Logo" width="220"/>
 </p>
 
-# Zabbix‑Docker 
-Production‑Ready Monitoring Stack 
+# Zabbix-Docker
 
-A production-grade, containerized Zabbix monitoring platform engineered to demonstrate observability, secure infrastructure design, and identity integration within a modern homelab environment.
+### Production-Style Monitoring Stack
+
+An enterprise-inspired monitoring platform built with Zabbix, PostgreSQL/TimescaleDB, and Docker Compose to demonstrate observability, infrastructure automation, security hardening, operational readiness, and identity integration.
 
 ---
 
 ## ✨ Highlights
 
-- **Clean architecture**: Zabbix Server, Web, DB, Proxy (optional), Agent
-- **Reproducible**: Docker Compose with env‑driven config and persistent volumes
-- **Security‑minded**: TLS via Caddy/Traefik overlay, secrets outside Git, least privilege
-- **Identity‑aware**: Optional **Authentik** SSO via **SAML** or **forward‑auth**
-- **Portfolio‑grade**: Clear docs, scripts, and an operations checklist
+- Clean architecture: Zabbix Server, Web Frontend, PostgreSQL, and Agent
+- Reproducible deployments with Docker Compose and persistent storage
+- Security-minded configuration and least-privilege controls
+- Optional Authentik SSO integration
+- Operational tooling for backup, restore, and diagnostics
+- Portfolio-grade documentation and architecture diagrams
+
+---
+
+## 🚀 Project Features
+
+- Docker Compose-based multi-container architecture
+- PostgreSQL/TimescaleDB-backed monitoring platform
+- Automated backup and restore tooling
+- Operational diagnostics and health validation
+- Security hardening using least-privilege principles
+- GitHub Actions validation pipeline
+- Architecture documentation and operational runbooks
+- Identity integration patterns using Authentik
 
 ---
 
 ## 🧭 Project Goals
 
-This project demonstrates how to design, deploy, and secure a self-contained observability platform using modern infrastructure tooling.
+This project demonstrates how to design, deploy, operate, and secure a self-contained observability platform using modern infrastructure tooling.
 
-Showcase the end‑to‑end journey of standing up an internal monitoring platform:
-- Network/host/service visibility with Zabbix templates and agents
-- Healthy container orchestration and stateful services on Docker
-- Secure exposure with TLS and SSO (when enabled)
-- Practical operations (backup/restore, diagnostics, troubleshooting)
+- Network, host, and service visibility using Zabbix templates and agents
+- Stateful containerized services using Docker Compose
+- Secure service exposure through TLS and identity integration
+- Operational readiness through diagnostics, backup, and recovery procedures
+- Infrastructure documentation and repeatable deployment workflows
 
 ---
 
 ## 🏗️ Architecture
 
-See the dedicated doc and diagram:
-<p align="center">
-  <img src="./docs/zabbix_architecture_public.svg" alt="Zabbix Docker Architecture" width="100%">
-  <sub>Having trouble viewing the SVG? View the PNG version <a href="./docs/zabbix_architecture_public.png">here</a>.</sub>
-</p>
+See the dedicated architecture documentation and diagrams.
 
-The architecture illustrates the full Zabbix monitoring stack running in Docker — including
-Zabbix Server, Web Frontend, PostgreSQL, and optional integrations for Authentik SSO and
-Caddy/Traefik for HTTPS termination.
+- Zabbix Server
+- Zabbix Web Frontend
+- PostgreSQL / TimescaleDB
+- Zabbix Agent
+- Optional Authentik SSO
+- Optional Caddy / Traefik reverse proxy for HTTPS
+
+---
+
+## 📚 Documentation
+
+- Architecture Guide (`docs/ARCHITECTURE.md`)
+- Operations Runbook (`docs/RUNBOOK.md`)
+- Security Guide (`docs/SECURITY.md`)
+- Backup & Restore Guide (`docs/BACKUP_RESTORE.md`)
 
 ---
 
 ## 🧰 Tech Stack
 
-- **Zabbix** (Server, Web, Proxy, Agent)
-- **PostgreSQL** (primary datastore)
-- **Docker Compose v2**
-- **Caddy** or **Traefik** *(optional)* for TLS + pretty URL (`https://monitor.lab`)
-- **Authentik** *(optional)* for SSO (SAML or forward‑auth patterns)
+### Core Components
+
+- Zabbix Server
+- Zabbix Web Frontend
+- Zabbix Agent 2
+- PostgreSQL / TimescaleDB
+
+### Platform Components
+
+- Docker Engine
+- Docker Compose v2
+- GitHub Actions
+
+### Optional Integrations
+
+- Authentik
+- Caddy
+- Traefik
 
 ---
 
 ## ⚙️ Prerequisites
 
-- Linux host with Docker Engine 24+ and Docker Compose v2
-- Local DNS/hosts entry for `monitor.lab` → Docker host IP
-- (Optional) TLS certificates or ACME DNS for your `.lab` domain
-- `git` and Graphviz (`dot`) if you want to render the diagram
+- Linux host running Docker Engine 24+
+- Docker Compose v2
+- Git
+- Graphviz (optional)
 
 ---
 
@@ -69,106 +105,123 @@ Caddy/Traefik for HTTPS termination.
 ```bash
 git clone https://github.com/dj-3dub/Zabbix-Docker.git
 cd Zabbix-Docker
-
-# Copy and tailor environment files
 cp .env.example .env
-# edit DOMAIN=monitor.lab and strong passwords
-
-# Bring up the base stack (no proxy, direct ports)
 docker compose up -d
-
-# Visit the UI on the published port or behind your proxy of choice
-# Optional: enable Caddy/Traefik overlay compose for TLS + pretty URL
 ```
 
-## 🔐 Optional: TLS + Reverse Proxy
+---
 
-- **Caddy overlay**: automatic HTTPS, minimal config
-- **Traefik overlay**: Docker label routing, middlewares, mTLS, dashboards
+## ⚙️ Operations
+
+```bash
+make validate
+make up
+make down
+make status
+make logs
+make diag
+make backup
+make restore FILE=backups/<backup-file>.sql
+```
 
 ---
 
-## 🔑 Optional: Authentik SSO Integration
+## 🔐 Optional TLS and Reverse Proxy
 
-This deployment supports integration with **Authentik** as a centralized identity provider, enabling secure single sign-on (SSO) for the Zabbix web interface.
-
-Two integration patterns are supported:
-
-- **SAML-based authentication (recommended):**  
-  Zabbix acts as a SAML Service Provider (SP) and Authentik as the Identity Provider (IdP).  
-  This approach allows seamless user federation, centralized policy enforcement, and single sign-on without requiring a reverse proxy.  
-
-- **Forward-auth via reverse proxy (Caddy or Traefik):**  
-  Authentik can also protect the Zabbix frontend through a forward-auth middleware, authenticating requests at the proxy layer and passing verified identity headers to Zabbix’s HTTP authentication module.  
-
-Both methods maintain compatibility with a local administrative account for break-glass access and support standard SSO attributes such as email, given name, and group membership.
-
-See **docs/ARCHITECTURE.md** for diagrams and steps.
+Supports Caddy or Traefik for HTTPS termination and secure exposure.
 
 ---
 
-## 🖥️ Live Agent Monitoring Example
+## 🔑 Optional Authentik SSO Integration
 
-The following capture demonstrates the Zabbix Agent operating on ubuntu-workstation.lab, validating active connectivity and telemetry exchange with the Zabbix Server.
-
-<p align="center">
-  <img src="docs/images/zabbix_agent_running.png" alt="Zabbix Agent Running on Ubuntu Workstation" width="85%">
-  <sub>Zabbix Agent service running on ubuntu-workstation.lab</sub>
-</p>
+Supports SAML-based authentication and forward-auth patterns for centralized identity management.
 
 ---
 
 ## 🧪 Diagnostics
 
-- `scripts/zbxdiag.sh` — quick API sanity: login/auth, version, host lookup
-- Container healthchecks for Server/Web/DB
-- Suggested item/triggers for self‑monitoring Zabbix itself
+Run:
+
+```bash
+make diag
+```
+
+Includes:
+
+- Container health validation
+- Service status checks
+- Network inspection
+- Database readiness validation
+- Log collection
+- Resource utilization reporting
 
 ---
 
 ## 🗃️ Backup & Restore
 
-- Nightly `pg_dump` to `/backups` via helper script
-- Store off‑box (NAS/S3/Restic). To restore, stop Zabbix Server, restore DB, start stack
+Backups are stored in:
+
+```text
+backups/
+```
+
+Create:
+
+```bash
+make backup
+```
+
+Restore:
+
+```bash
+make restore FILE=backups/<backup-file>.sql
+```
 
 ---
 
 ## 🔐 Security Notes
 
-- Enforce HTTPS when exposed; restrict HTTP
-- Store secrets in `.env` / Docker secrets; **never** commit real credentials
-- Limit container privileges and networks
-- Set strong DB/Zabbix passwords and rotate routinely
+- Externalized configuration via environment variables
+- Secrets excluded from source control
+- Least-privilege container settings
+- Version-pinned images
+- Isolated Docker networking
 
 ---
 
 ## 🛣️ Roadmap
 
-- Grafana dashboards via Zabbix data source (read‑only)
-- CI/CD: compose lint + shellcheck + smoke API test
-- Terraform module to provision host + DNS
-- HA notes for Zabbix Server and DB
+- Grafana integration
+- Automated vulnerability scanning
+- Compose linting and smoke testing
+- Terraform deployment automation
+- High availability reference architecture
 
 ---
 
 ## 🧠 What I Learned
 
-Building this project reinforced several key areas of my platform engineering and DevOps skill set:
+- End-to-end observability design
+- Secure infrastructure practices
+- Identity integration patterns
+- Infrastructure-as-Code discipline
+- Operational readiness and recovery planning
+- Technical documentation and architecture communication
 
-- **End-to-end observability design:** Implemented a complete monitoring stack — from agent data collection to dashboards and alerting — mirroring real-world enterprise environments.  
-- **Secure infrastructure practices:** Strengthened my understanding of TLS termination, container isolation, and least-privilege configurations in multi-service Docker environments.  
-- **Identity and access integration:** Explored how SAML and forward-auth patterns connect application authentication to centralized identity providers like Authentik.  
-- **Infrastructure-as-Code discipline:** Structured the project with reproducible Compose files, environment templates, and Makefile targets for consistent deployments.  
-- **Documentation and presentation:** Learned to communicate complex architectures clearly through diagrams, structured READMEs, and professional repo organization.  
-
-Each of these lessons translates directly into the way I approach designing, securing, and automating production-ready environments.
+Each of these lessons translates directly into the way I approach designing, securing, monitoring, and automating enterprise infrastructure environments.
 
 ---
 
 ## 👤 About
 
-Built by **Tim Heverin** (dj‑3dub).  
-- GitHub: https://github.com/dj-3dub  
-- LinkedIn: https://www.linkedin.com/in/tim-heverin/
+Built by **Tim Heverin**
 
-MIT License.
+GitHub: https://github.com/dj-3dub
+
+LinkedIn: https://www.linkedin.com/in/tim-heverin/
+
+---
+
+## License
+
+MIT License
