@@ -2,7 +2,8 @@
 <img src="docs/images/zabbix_logo_500x131.png" alt="Zabbix Logo" width="220"/>
 </p>
 
-# Zabbix‑Docker — Production‑Ready Monitoring Stack 
+# Zabbix‑Docker 
+Production‑Ready Monitoring Stack 
 
 A production-grade, containerized Zabbix monitoring platform engineered to demonstrate observability, secure infrastructure design, and identity integration within a modern homelab environment.
 
