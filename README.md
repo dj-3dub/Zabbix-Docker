@@ -2,105 +2,106 @@
   <img src="docs/images/zabbix_logo_500x131.png" alt="Zabbix Logo" width="220"/>
 </p>
 
-# Zabbix-Docker
+# Zabbix Monitoring Platform
 
-### Production-Style Monitoring Stack
+A production-oriented observability platform built with Zabbix, PostgreSQL/TimescaleDB, Docker Compose, and Terraform.
 
-An enterprise-inspired monitoring platform built with Zabbix, PostgreSQL/TimescaleDB, and Docker Compose to demonstrate observability, infrastructure automation, security hardening, operational readiness, and identity integration.
-
----
-
-## ✨ Highlights
-
-- Clean architecture: Zabbix Server, Web Frontend, PostgreSQL, and Agent
-- Reproducible deployments with Docker Compose and persistent storage
-- Security-minded configuration and least-privilege controls
-- Optional Authentik SSO integration
-- Operational tooling for backup, restore, and diagnostics
-- Portfolio-grade documentation and architecture diagrams
+This project demonstrates infrastructure provisioning, monitoring, operational automation, security controls, backup and recovery procedures, and Infrastructure as Code (IaC) practices commonly used in platform engineering and site reliability engineering environments.
 
 ---
 
-## 🚀 Project Features
+## Overview
 
-- Docker Compose-based multi-container architecture
+The platform provides a containerized monitoring solution designed to showcase operational readiness, repeatable deployments, infrastructure automation, and enterprise-style documentation.
+
+---
+
+## Highlights
+
+- Multi-container architecture using Docker Compose
 - PostgreSQL/TimescaleDB-backed monitoring platform
-- Automated backup and restore tooling
-- Operational diagnostics and health validation
-- Security hardening using least-privilege principles
+- Infrastructure provisioning with Terraform
+- Automated operational workflows using Makefiles
+- Backup and restore automation
+- Security-focused container configuration
 - GitHub Actions validation pipeline
 - Architecture documentation and operational runbooks
-- Identity integration patterns using Authentik
 
 ---
 
-## 🧭 Project Goals
+## Architecture
 
-This project demonstrates how to design, deploy, operate, and secure a self-contained observability platform using modern infrastructure tooling.
+The platform separates infrastructure provisioning from application deployment.
 
-- Network, host, and service visibility using Zabbix templates and agents
-- Stateful containerized services using Docker Compose
-- Secure service exposure through TLS and identity integration
-- Operational readiness through diagnostics, backup, and recovery procedures
-- Infrastructure documentation and repeatable deployment workflows
+Terraform provisions infrastructure resources while Docker Compose manages the monitoring application stack.
 
----
+```text
+Terraform
+    │
+    ▼
+AWS Infrastructure
+    │
+    ▼
+Ubuntu Host
+    │
+    ▼
+Docker Compose
+ ├── Zabbix Server
+ ├── Zabbix Web Frontend
+ ├── PostgreSQL / TimescaleDB
+ └── Zabbix Agent
+```
 
-## 🏗️ Architecture
+For detailed architecture diagrams and deployment flows, see:
 
-See the dedicated architecture documentation and diagrams.
-
-- Zabbix Server
-- Zabbix Web Frontend
-- PostgreSQL / TimescaleDB
-- Zabbix Agent
-- Optional Authentik SSO
-- Optional Caddy / Traefik reverse proxy for HTTPS
-
----
-
-## 📚 Documentation
-
-- Architecture Guide (`docs/ARCHITECTURE.md`)
-- Operations Runbook (`docs/RUNBOOK.md`)
-- Security Guide (`docs/SECURITY.md`)
-- Backup & Restore Guide (`docs/BACKUP_RESTORE.md`)
+- docs/ARCHITECTURE.md
 
 ---
 
-## 🧰 Tech Stack
+## Infrastructure as Code
 
-### Core Components
+Terraform provisions:
 
-- Zabbix Server
-- Zabbix Web Frontend
-- Zabbix Agent 2
-- PostgreSQL / TimescaleDB
+- VPC
+- Public Subnet
+- Internet Gateway
+- Route Table
+- Security Group
+- Ubuntu EC2 Instance
+- Docker Engine Installation
 
-### Platform Components
+Terraform manages infrastructure while Docker Compose manages application deployment.
 
-- Docker Engine
-- Docker Compose v2
-- GitHub Actions
+### Terraform Workflow
 
-### Optional Integrations
-
-- Authentik
-- Caddy
-- Traefik
-
----
-
-## ⚙️ Prerequisites
-
-- Linux host running Docker Engine 24+
-- Docker Compose v2
-- Git
-- Graphviz (optional)
+```bash
+make tf-init
+make tf-plan
+make tf-apply
+make tf-destroy
+make tf-validate
+```
 
 ---
 
-## 🚀 Quick Start
+## Repository Structure
+
+```text
+.
+├── docs/
+├── scripts/
+├── terraform/
+│   └── aws/
+├── backups/
+├── .github/
+├── docker-compose.yml
+├── Makefile
+└── README.md
+```
+
+---
+
+## Quick Start
 
 ```bash
 git clone https://github.com/dj-3dub/Zabbix-Docker.git
@@ -111,12 +112,13 @@ docker compose up -d
 
 ---
 
-## ⚙️ Operations
+## Operations
 
 ```bash
 make validate
 make up
 make down
+make restart
 make status
 make logs
 make diag
@@ -126,93 +128,35 @@ make restore FILE=backups/<backup-file>.sql
 
 ---
 
-## 🔐 Optional TLS and Reverse Proxy
+## Documentation
 
-Supports Caddy or Traefik for HTTPS termination and secure exposure.
-
----
-
-## 🔑 Optional Authentik SSO Integration
-
-Supports SAML-based authentication and forward-auth patterns for centralized identity management.
+- docs/ARCHITECTURE.md
+- docs/RUNBOOK.md
+- docs/SECURITY.md
+- docs/BACKUP_RESTORE.md
 
 ---
 
-## 🧪 Diagnostics
+## Engineering Takeaways
 
-Run:
+This project provided hands-on experience across multiple disciplines commonly encountered in platform engineering, infrastructure operations, and site reliability engineering.
 
-```bash
-make diag
-```
+Key areas of learning and practical application included:
 
-Includes:
+- End-to-end observability platform design and deployment
+- Infrastructure provisioning and automation using Terraform
+- Secure infrastructure practices and least-privilege design
+- Containerized application deployment and lifecycle management
+- Identity integration patterns and access control concepts
+- Backup, recovery, and operational readiness planning
+- Monitoring, diagnostics, and incident response workflows
+- Technical documentation, runbook development, and architecture communication
 
-- Container health validation
-- Service status checks
-- Network inspection
-- Database readiness validation
-- Log collection
-- Resource utilization reporting
-
----
-
-## 🗃️ Backup & Restore
-
-Backups are stored in:
-
-```text
-backups/
-```
-
-Create:
-
-```bash
-make backup
-```
-
-Restore:
-
-```bash
-make restore FILE=backups/<backup-file>.sql
-```
+The project reinforced the importance of treating infrastructure as a product: designing for reliability, maintainability, security, and repeatability from the beginning. These principles directly influence how I approach building, operating, and automating enterprise infrastructure environments.
 
 ---
 
-## 🔐 Security Notes
-
-- Externalized configuration via environment variables
-- Secrets excluded from source control
-- Least-privilege container settings
-- Version-pinned images
-- Isolated Docker networking
-
----
-
-## 🛣️ Roadmap
-
-- Grafana integration
-- Automated vulnerability scanning
-- Compose linting and smoke testing
-- Terraform deployment automation
-- High availability reference architecture
-
----
-
-## 🧠 What I Learned
-
-- End-to-end observability design
-- Secure infrastructure practices
-- Identity integration patterns
-- Infrastructure-as-Code discipline
-- Operational readiness and recovery planning
-- Technical documentation and architecture communication
-
-Each of these lessons translates directly into the way I approach designing, securing, monitoring, and automating enterprise infrastructure environments.
-
----
-
-## 👤 About
+## About
 
 Built by **Tim Heverin**
 
