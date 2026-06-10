@@ -1,4 +1,4 @@
-# Zabbix Docker Lab - Operational Helper Makefile
+# Zabbix Monitoring Platform - Operational Helper Makefile
 # Use tabs, not spaces, for command indentation.
 
 SHELL := /bin/bash
@@ -7,13 +7,16 @@ COMPOSE := docker compose
 BACKUP_DIR := backups
 ARCH_DOT := docs/architecture.dot
 ARCH_SVG := docs/architecture.svg
+TF_DIR := terraform/aws
 
 .PHONY: help up down restart logs status health validate pull update \
-	backup restore backup-list clean diag report security arch
+	backup restore backup-list clean diag report security arch \
+	tf-init tf-plan tf-apply tf-destroy tf-fmt tf-validate
 
 help:
-	@echo "Zabbix Docker Lab Commands"
+	@echo "Zabbix Monitoring Platform Commands"
 	@echo ""
+	@echo "Docker Operations:"
 	@echo "  make up            Start the Zabbix stack"
 	@echo "  make down          Stop the Zabbix stack"
 	@echo "  make restart       Restart all services"
@@ -23,13 +26,27 @@ help:
 	@echo "  make validate      Validate docker-compose.yml"
 	@echo "  make pull          Pull updated images"
 	@echo "  make update        Pull images and recreate containers"
+	@echo ""
+	@echo "Backup and Recovery:"
 	@echo "  make backup        Run database backup script"
 	@echo "  make restore       Restore database backup: make restore FILE=backups/file.sql"
 	@echo "  make backup-list   List available backups"
+	@echo ""
+	@echo "Diagnostics and Security:"
 	@echo "  make diag          Run Zabbix diagnostic script"
 	@echo "  make report        Show operational report"
 	@echo "  make security      Scan images with Trivy if installed"
 	@echo "  make arch          Render architecture diagram"
+	@echo ""
+	@echo "Terraform:"
+	@echo "  make tf-init       Initialize Terraform"
+	@echo "  make tf-plan       Review Terraform execution plan"
+	@echo "  make tf-apply      Apply Terraform infrastructure"
+	@echo "  make tf-destroy    Destroy Terraform infrastructure"
+	@echo "  make tf-fmt        Format Terraform files"
+	@echo "  make tf-validate   Validate Terraform configuration"
+	@echo ""
+	@echo "Cleanup:"
 	@echo "  make clean         Stop stack and remove volumes"
 
 up:
@@ -75,8 +92,12 @@ backup:
 	fi
 
 restore:
+	@if [[ -z "$(FILE)" ]]; then \
+		echo "Usage: make restore FILE=backups/<backup-file>.sql"; \
+		exit 1; \
+	fi
 	@if [[ -x scripts/restore.sh ]]; then \
-		bash scripts/restore.sh $(FILE); \
+		bash scripts/restore.sh "$(FILE)"; \
 	else \
 		echo "scripts/restore.sh not found or not executable."; \
 		exit 1; \
@@ -131,6 +152,24 @@ arch:
 		echo "Graphviz is not installed."; \
 		echo "Install with: sudo apt install graphviz -y"; \
 	fi
+
+tf-init:
+	terraform -chdir=$(TF_DIR) init
+
+tf-plan:
+	terraform -chdir=$(TF_DIR) plan
+
+tf-apply:
+	terraform -chdir=$(TF_DIR) apply
+
+tf-destroy:
+	terraform -chdir=$(TF_DIR) destroy
+
+tf-fmt:
+	terraform -chdir=$(TF_DIR) fmt -recursive
+
+tf-validate:
+	terraform -chdir=$(TF_DIR) validate
 
 clean:
 	@echo "WARNING: This will stop the stack and remove volumes."
